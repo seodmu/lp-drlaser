@@ -1,0 +1,326 @@
+===============================
+1. SESUAIKAN INI UNTUK VIDEO POPUP
+===============================
+::=> ubah class di tag a berikut: 
+class="vp-a vp-yt-type"
+  menjadi 
+class="lvideo"
+
+::=> masih di tag a yang sama ubah href nya menjadi berikut :
+href="https://www.youtube.com/watch?v=tgzi5aqmV2w"
+  menjadi
+data-url="https://www.youtube.com/watch?v=tgzi5aqmV2w"
+
+
+============================================
+2. COPY INI DI BAGIAN BAWAH DARI CLOSE TAG HTML UNTUK KEBUTUHAN SUBMIT
+note : sesuaikan bagian input produk di javascript part berikut : manipulasi data form submit
+============================================
+
+<style>
+  @font-face {
+  font-family: "Roboto";
+  src: url('Roboto.ttf');
+  }
+
+  body,ul li,ol li,a,span,p,div,strong,h1,h2,h3,h4,h5,h6{font-family: 'Roboto', sans-serif;}
+</style>
+
+
+<style>
+:root {
+  --primary-color: #f68d1e;
+}
+
+#lvideo-wrap {
+  position: fixed;
+  height: 100dvh;
+  z-index: 9991;
+  opacity: 0;
+  visibility: hidden;
+
+  &,
+  &:after,
+  .lvideo-overlay {
+    left: 0;
+    top: 0;
+    width: 100%;
+    transition: all 0.3s ease-in-out;
+    box-sizing: border-box;
+  }
+
+  &:after,
+  .lvideo-overlay {
+    height: 100%;
+    position: absolute;
+  }
+
+  &:after {
+    content: "";
+    display: block;
+    background-color: var(--primary-color);
+    opacity: 0;
+    z-index: -1;
+  }
+
+  .lvideo-container {
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  video,
+  iframe {
+    border-radius: 12px;
+    position: relative;
+    box-sizing: border-box;
+    background-color: #000;
+
+    z-index: 10;
+    box-shadow: 0 0 19px rgba(0, 0, 0, 0.16);
+    display: block;
+    max-width: 1280px;
+    height: auto;
+    width: 90%;
+    aspect-ratio: 16 / 9;
+  }
+
+  video {
+    object-fit: cover;
+  }
+
+  .lvideo-close {
+    background-color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 5%;
+    top: 5%;
+    width: 42px;
+    height: 42px;
+    border-radius: 100%;
+    border: solid 2px var(--primary-color);
+    padding: 0;
+    transition: all 0.3s ease-in-out;
+    z-index: 150;
+    &:before,
+    &:after {
+      content: "";
+      width: 60%;
+      height: 3px;
+      background-color: var(--primary-color);
+      position: absolute;
+      transition: all 0.3s ease-in-out;
+    }
+    &:before {
+      transform: rotate(42deg);
+    }
+    &:after {
+      transform: rotate(-42deg);
+    }
+    &:focus {
+      outline: none;
+    }
+
+    &:hover {
+      background-color: var(--primary-color);
+      &:before,
+      &:after {
+        background-color: #fff;
+      }
+    }
+  }
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+
+    &:after {
+      opacity: 0.5;
+    }
+  }
+}
+
+// custom css
+
+body {
+  background-color: #333;
+  color: #fff;
+}
+
+.play-btn-animated {
+  width: 100px;
+  height: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #fff;
+  border-radius: 100px;
+  transition: all 0.3s ease;
+  line-height: 100px;
+  position: relative;
+  padding: 0;
+  cursor: pointer;
+  border: 0;
+  &:before,
+  &:after {
+    content: "";
+    border: 1px solid;
+    border-color: #fff;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 1;
+    animation: 1s it-zoom linear infinite;
+  }
+
+  &:before {
+    animation-delay: 0.5s;
+  }
+
+  &:hover {
+    transform: scale(1.1);
+  }
+  i {
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 15px 0 15px 15px;
+    border-color: transparent transparent transparent #333;
+    margin: auto;
+  }
+}
+
+@keyframes it-zoom {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+a{cursor: pointer;}
+</style>
+
+<script>
+ document.querySelectorAll(".lvideo").forEach((d) => d.addEventListener("click", playVideos));
+const body = document.body;
+
+function playVideos(e) {
+  lvideo(e.currentTarget.dataset.url);
+
+  body.classList.add("lvideo-active");
+
+  var lvideoWrap = document.createElement("DIV");
+  lvideoWrap.setAttribute("id", "lvideo-wrap");
+  document.body.appendChild(lvideoWrap);
+
+  // console.log(this.dataset.url)
+  // console.log(this.dataset.video)
+
+  const wrapper = document.getElementById("lvideo-wrap");
+  wrapper.classList.add("active");
+
+  const url = this.dataset.url;
+
+  const startModal = `<span onclick="lvideoClose();" class="lvideo-overlay"></span> <div class="lvideo-container">`;
+  const finishModal = `</div><button onclick="lvideoClose();" class="lvideo-close">x</button>`;
+
+  // if (url.indexOf("youtube") !== -1) {
+  if (url.indexOf("youtube") !== -1 || url.indexOf("youtu") !== -1) {
+    //console.log("is youtube")
+
+    const ytUrl = [this.dataset.url];
+
+    var i,
+      r,
+      regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
+
+    for (i = 0; i < ytUrl.length; ++i) {
+      r = ytUrl[i].match(regExp);
+      //console.log(r[1])
+
+      document.getElementById(
+        "lvideo-wrap"
+      ).innerHTML = `${startModal}<iframe width="560" height="315" title="YouTube Video" src='https://www.youtube.com/embed/${r[1]}?rel=0&autoplay=1&controls=0&mute=0&loop=1' frameborder="0" allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>${finishModal}`;
+    }
+  }
+}
+
+// CLOSE MODAL LVIDEO
+const lvideoClose = () => {
+  body.classList.remove("lvideo-active");
+
+  const wrapper = document.getElementById("lvideo-wrap");
+  wrapper.parentNode.removeChild(wrapper);
+};
+
+// LAUNCH
+function lvideo(){}
+  
+</script>
+
+
+<script>
+  //manipulasi data form submit
+  function ready(callback){
+      if (document.readyState!='loading') callback();
+      else if (document.addEventListener) document.addEventListener('DOMContentLoaded', callback);
+      else document.attachEvent('onreadystatechange', function(){if (document.readyState=='complete') callback();});
+  }
+
+  ready(function(){
+    // input form hide
+    let slugproduk = 'drlaser'; // drlaser,smartchef,beezin = ganti sesuaikan ini
+    let urlsaveleaddata = "https://drlaser.store/p/saveleadcurl/"; // drlaser // "https://dimarco.id/p/saveleadcurl/"; // smartchef = ganti sesuaikan ini
+
+    let urlParams   = new URLSearchParams(window.location.search);
+    let kodesumber  = urlParams.get('sumber') == null ? "lpdmu" : urlParams.get('sumber') ;
+    console.log('kodesumber='+kodesumber);
+
+    let urlnow = window.location.href;
+    console.log(urlnow);
+
+    let urlhome = window.location.host;
+    console.log(urlhome);
+
+    document.querySelector('[name="kodesumber"]').value = kodesumber;
+    document.querySelector('[name="produk"]').value = slugproduk;
+    document.querySelector('[name="urlnow"]').value = urlnow;
+    document.querySelector('[name="urlhome"]').value = urlhome;
+    document.querySelector('[name="urlsaveleaddata"]').value = urlsaveleaddata;
+
+    // event listener submit
+    document.getElementById("wqsubmitbtn").addEventListener("click",function(){
+      document.querySelector('#trnotiferrorplace').style = "display:none";
+      document.querySelector('#notiferrorplace').innerHTML = "";
+
+      let cekNama = document.querySelector('#nama').value.trim().length;
+      let cekTelp = document.querySelector('#telp').value.trim().length;
+
+      if(cekNama < 3 || cekTelp < 10){
+        document.querySelector('#trnotiferrorplace').style = "display:";
+        document.querySelector('#notiferrorplace').innerHTML = "<span style=\"padding:10px; background-color:#fbd0da;\">⚠️ Nama & WhatsApp Isi Dengan Benar<span>";
+        document.querySelector('#wqloader').style = "display:none";
+        document.querySelector('#wqsubmitbtn').style = "background:#126510; font-weight:bold;";
+
+        return false;
+      }else{
+        console.log('data valid');
+        document.querySelector('#wqloader').style = "display:";
+        document.querySelector('#wqform').submit();
+      
+      }              
+    });
+
+});
+</script>
